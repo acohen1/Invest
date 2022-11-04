@@ -1,8 +1,8 @@
 #
 #   Written by: Alex Cohen
 #   API: IEX Cloud https://iexcloud.io/docs/api/
-#   TODO: Enable retrieval of historical I/S; B/S; Cash Flows
-#           Give each function year/quarter parameter to specify
+#   TODO: add variable period as parameter to financial statement functions
+#
 #
 
 import pandas as pd
@@ -33,33 +33,33 @@ def get_price_history(symbol):
 def get_income_statement(symbol):
     """
     :param symbol: string of stock symbol
-    :return: dictionary of income statement of stock symbol
+    :return: list of i/s dictionaries sorted in descending order (2022, 2021, 2020...)
     """
     # api request from IEX cloud
-    price_history_api_url = f'https://sandbox.iexapis.com/stable/stock/{symbol}/income?token={IEX_CLOUD_API_TOKEN}'
-    data = requests.get(price_history_api_url).json()['income'][0]
+    is_api_url = f'https://sandbox.iexapis.com/stable/stock/{symbol}/income?period=annual&last=4&token={IEX_CLOUD_API_TOKEN}'
+    data = requests.get(is_api_url).json()['income']
     return data
 
 
 def get_cash_flows(symbol):
     """
     :param symbol: string of stock symbol
-    :return: dictionary of cash flows statement of stock symbol
+    :return: list of cf statement dictionaries sorted in descending order (2022, 2021, 2020...)
     """
     # api request from IEX cloud
-    price_history_api_url = f'https://sandbox.iexapis.com/stable/stock/{symbol}/cash-flow?token={IEX_CLOUD_API_TOKEN}'
-    data = requests.get(price_history_api_url).json()['cashflow'][0]
+    cf_api_url = f'https://sandbox.iexapis.com/stable/stock/{symbol}/cash-flow?period=annual&last=4&token={IEX_CLOUD_API_TOKEN}'
+    data = requests.get(cf_api_url).json()['cashflow']
     return data
 
 
 def get_balance_sheet(symbol):
     """
     :param symbol: string of stock symbol
-    :return: dictionary of balance sheet of stock symbol
+    :return: list of b/s dictionaries sorted in descending order (2022, 2021, 2020...)
     """
     # api request from IEX cloud
-    price_history_api_url = f'https://sandbox.iexapis.com/stable/stock/{symbol}/balance-sheet?token={IEX_CLOUD_API_TOKEN}'
-    data = requests.get(price_history_api_url).json()['balancesheet'][0]
+    bs_api_url = f'https://sandbox.iexapis.com/stable/stock/{symbol}/balance-sheet?period=annual&last=4&token={IEX_CLOUD_API_TOKEN}'
+    data = requests.get(bs_api_url).json()['balancesheet']
     return data
 
 
@@ -73,3 +73,14 @@ def remove_date_intervals(df_hist_prices, interval):
         if idx % interval != 0:
             df_hist_prices = df_hist_prices.drop(labels=[idx], axis=0)
     return df_hist_prices
+
+
+def get_raw_financials(symbol, range):
+    """
+    :param symbol: string of stock symbol
+    :param range: number of years of statements to retrieve
+    :return:
+    """
+    rf_api_url = f'https://sandbox.iexapis.com/stable/time-series/reported_financials/{symbol}/10-K?range={range}y&token={IEX_CLOUD_API_TOKEN}'
+    data = requests.get(rf_api_url).json()
+    return data

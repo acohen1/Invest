@@ -8,8 +8,8 @@ import revenue_expense_forecast as md
 
 
 if __name__ == '__main__':
-    rev_exp_forecast = md.get_rev_exp_forecast('AAPL')
-    print(rev_exp_forecast)
+    hist_income_statement = fd.get_historical_is('AAPL')
+    print(hist_income_statement)
 
 
 

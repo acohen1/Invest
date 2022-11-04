@@ -4,7 +4,7 @@ import numpy as np
 import datetime
 
 
-def generate_dataframe(symbol):
+def generate_dataframe():
     # generate index and columns for rev exp forecast dataframe
     df_index = [
         'Revenue', '% Growth',
@@ -18,20 +18,26 @@ def generate_dataframe(symbol):
     ]
     df_columns = []
     current_year = datetime.date.today().year
-    # TODO: variable adjust for how far out to forecast
-    for year in range(0, 6):
+    # 3 years historical; 6 years future
+    for year in range(-3, 6):
         df_columns.append(current_year + year)
 
     rev_exp_forecast = pd.DataFrame(index=df_index, columns=df_columns)
     return rev_exp_forecast
 
 
-def fill_recent_year(df, symbol):
-    # retrieve financial statement
+def fill_dataframe(df, symbol):
+    # retrieve financials
+    # reminder: financial statement functions return list of dictionaries in descending order
     balance_sheet = fd.get_balance_sheet(symbol)
     income_statement = fd.get_income_statement(symbol)
     cash_flows = fd.get_cash_flows(symbol)
     year = datetime.date.today().year
+
+
+
+
+
 
     df.at['Revenue', year] = income_statement['totalRevenue']
     df.at['COGS', year] = income_statement['costOfRevenue']
