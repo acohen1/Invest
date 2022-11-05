@@ -1,7 +1,7 @@
 #
 #   Written by: Alex Cohen
 #   API: IEX Cloud https://iexcloud.io/docs/api/
-#   TODO: add variable period as parameter to financial statement functions
+#
 #
 #
 
@@ -10,14 +10,15 @@ import requests
 from privtoken import IEX_CLOUD_API_TOKEN
 
 
-def get_price_history(symbol):
+def get_price_history(symbol, range):
     """
     :param symbol: string of stock symbol
+    :param range: number of years of price history to retrieve
     :return: pandas dataframe of 1year price history of stock symbol
     """
-    # TODO: create parameter that allows adjustment of time horizon for price history
+    #
     # api request from IEX cloud
-    price_history_api_url = f'https://sandbox.iexapis.com/stable/stock/{symbol}/chart/1y?token={IEX_CLOUD_API_TOKEN}'
+    price_history_api_url = f'https://sandbox.iexapis.com/stable/stock/{symbol}/chart/{range}y?token={IEX_CLOUD_API_TOKEN}'
     data = requests.get(price_history_api_url).json()
 
     # append historical price data from api request to pd dataframe
@@ -28,6 +29,17 @@ def get_price_history(symbol):
 
     return historical_prices
 
+
+def remove_date_intervals(df_hist_prices, interval):
+    """
+    :param df_hist_prices: pandas dataframe of historical prices
+    :param interval: how often (in indices) to keep data
+    :return: modified df_hist_prices with removed intervals
+    """
+    for idx, i in enumerate(df_hist_prices.iterrows()):
+        if idx % interval != 0:
+            df_hist_prices = df_hist_prices.drop(labels=[idx], axis=0)
+    return df_hist_prices
 
 
 def get_income_statement(symbol):
@@ -63,23 +75,11 @@ def get_balance_sheet(symbol):
     return data
 
 
-def remove_date_intervals(df_hist_prices, interval):
-    """
-    :param df_hist_prices: pandas dataframe of historical prices
-    :param interval: how often (in indices) to keep data
-    :return: modified df_hist_prices with removed intervals
-    """
-    for idx, i in enumerate(df_hist_prices.iterrows()):
-        if idx % interval != 0:
-            df_hist_prices = df_hist_prices.drop(labels=[idx], axis=0)
-    return df_hist_prices
-
-
 def get_raw_financials(symbol, range):
     """
     :param symbol: string of stock symbol
     :param range: number of years of statements to retrieve
-    :return:
+    :return list of fin data dictionaries sorted in decending order (CAUTION: arbitrarily formatted dicts)
     """
     rf_api_url = f'https://sandbox.iexapis.com/stable/time-series/reported_financials/{symbol}/10-K?range={range}y&token={IEX_CLOUD_API_TOKEN}'
     data = requests.get(rf_api_url).json()
