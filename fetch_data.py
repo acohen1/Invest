@@ -16,7 +16,7 @@ def get_price_history(symbol, range):
     :param range: number of years of price history to retrieve
     :return: pandas dataframe of 1year price history of stock symbol
     """
-    #
+    
     # api request from IEX cloud
     price_history_api_url = f'https://sandbox.iexapis.com/stable/stock/{symbol}/chart/{range}y?token={IEX_CLOUD_API_TOKEN}'
     data = requests.get(price_history_api_url).json()
@@ -36,16 +36,14 @@ def remove_date_intervals(df_hist_prices, interval):
     :param interval: how often (in indices) to keep data
     :return: modified df_hist_prices with removed intervals
     """
-    for idx, i in enumerate(df_hist_prices.iterrows()):
-        if idx % interval != 0:
-            df_hist_prices = df_hist_prices.drop(labels=[idx], axis=0)
+    df_hist_prices = remove_date_intervals(df_hist_prices, 2)
     return df_hist_prices
 
 
 def get_income_statement(symbol):
     """
     :param symbol: string of stock symbol
-    :return: list of i/s dictionaries sorted in descending order (2022, 2021, 2020...)
+    :return: list of i/s dictionaries over the last 4 years sorted in descending order (2022, 2021, 2020...)
     """
     # api request from IEX cloud
     is_api_url = f'https://sandbox.iexapis.com/stable/stock/{symbol}/income?period=annual&last=4&token={IEX_CLOUD_API_TOKEN}'
@@ -56,7 +54,7 @@ def get_income_statement(symbol):
 def get_cash_flows(symbol):
     """
     :param symbol: string of stock symbol
-    :return: list of cf statement dictionaries sorted in descending order (2022, 2021, 2020...)
+    :return: list of cf statement dictionaries over the last 4 years sorted in descending order (2022, 2021, 2020...)
     """
     # api request from IEX cloud
     cf_api_url = f'https://sandbox.iexapis.com/stable/stock/{symbol}/cash-flow?period=annual&last=4&token={IEX_CLOUD_API_TOKEN}'
@@ -67,7 +65,7 @@ def get_cash_flows(symbol):
 def get_balance_sheet(symbol):
     """
     :param symbol: string of stock symbol
-    :return: list of b/s dictionaries sorted in descending order (2022, 2021, 2020...)
+    :return: list of b/s dictionaries over the last 4 years sorted in descending order (2022, 2021, 2020...)
     """
     # api request from IEX cloud
     bs_api_url = f'https://sandbox.iexapis.com/stable/stock/{symbol}/balance-sheet?period=annual&last=4&token={IEX_CLOUD_API_TOKEN}'
@@ -84,3 +82,4 @@ def get_raw_financials(symbol, range):
     rf_api_url = f'https://sandbox.iexapis.com/stable/time-series/reported_financials/{symbol}/10-K?range={range}y&token={IEX_CLOUD_API_TOKEN}'
     data = requests.get(rf_api_url).json()
     return data
+
