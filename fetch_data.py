@@ -1,7 +1,7 @@
 #
 #   Written by: Alex Cohen
 #   API: IEX Cloud https://iexcloud.io/docs/api/
-#
+#   TODO: workaround on IEX Cloud API 4year lower limit for financials
 #
 #
 
@@ -60,6 +60,7 @@ def get_cash_flows(symbol):
     cf_api_url = f'https://sandbox.iexapis.com/stable/stock/{symbol}/cash-flow?period=annual&last=4&token={IEX_CLOUD_API_TOKEN}'
     data = requests.get(cf_api_url).json()['cashflow']
     return data
+
 
 
 def get_balance_sheet(symbol):

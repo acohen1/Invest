@@ -42,4 +42,5 @@ def generate_dataframe(symbol, year_lower_bound, year_upper_bound):
         rev_exp_forecast.loc['Tax Expense', year] = income_statement[year-current_year]['incomeTax']
         rev_exp_forecast.loc['Net Profit', year] = income_statement[year-current_year]['netIncome']
 
+
     return rev_exp_forecast
