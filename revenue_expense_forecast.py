@@ -5,9 +5,11 @@ import datetime
 
 #TODO: make other functions modify self.rev_exp_forecast directly instead of returning a new df (for consistency); also make sure to update the docstrings
 #TODO: continue to implement functionality for custom rate entries (modify forecast_df, etc.)
+
 class RevenueExpenseForecast:
     def __init__(self, symbol, year_lower_bound, year_upper_bound, custom_rates_matrix=None):
         """
+        WARNING: current year_lower_bound is limited to 3 years before current year (IEX cloud api limitation)
         :param symbol: stock symbol (str)
         :param year_lower_bound: lower bound of years to forecast (int)
         :param year_upper_bound: upper bound of years to forecast (int)
@@ -15,8 +17,19 @@ class RevenueExpenseForecast:
         """
         self.symbol = symbol
         self.current_year = datetime.datetime.now().year
-        self.year_lower_bound = year_lower_bound
-        self.year_upper_bound = year_upper_bound
+
+        #current IEX limitation doesn't let us pull more than 3 years worth of data
+        if year_lower_bound < self.current_year - 3 or year_lower_bound > self.current_year:
+            self.year_lower_bound = self.current_year - 3
+        else:
+            self.year_lower_bound = year_lower_bound
+        
+            
+        #upper bound must be greater than or equal to current year
+        if year_upper_bound < self.current_year:
+            self.year_upper_bound = self.current_year
+        else:
+            self.year_upper_bound = year_upper_bound
 
         self.rev_exp_forecast = self.generate_df()
         self.rev_exp_forecast = self.populate_df()
