@@ -77,10 +77,9 @@ def get_balance_sheet(symbol):
 def get_raw_financials(symbol, range):
     """
     :param symbol: string of stock symbol
-    :param range: number of years of statements to retrieve
+    :param range: number of quarters of info to retrieve
     :return list of fin data dictionaries sorted in decending order (CAUTION: arbitrarily formatted dicts)
     """
-    rf_api_url = f'https://sandbox.iexapis.com/stable/time-series/reported_financials/{symbol}/10-K?range={range}y&token={IEX_CLOUD_API_TOKEN}'
+    rf_api_url = f'https://cloud.iexapis.com/v1//data/CORE/fundamentals/{symbol}/quarterly?range={range}q&token={IEX_CLOUD_API_TOKEN}'
     data = requests.get(rf_api_url).json()
     return data
-
