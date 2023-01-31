@@ -80,6 +80,6 @@ def get_raw_financials(symbol, range):
     :param range: number of quarters of info to retrieve
     :return list of fin data dictionaries sorted in decending order (CAUTION: arbitrarily formatted dicts)
     """
-    rf_api_url = f'https://cloud.iexapis.com/v1//data/CORE/fundamentals/{symbol}/quarterly?range={range}q&token={IEX_CLOUD_API_TOKEN}'
+    rf_api_url = f'https://cloud.iexapis.com/v1/data/CORE/fundamentals/{symbol}/quarterly?range={range}q&token={IEX_CLOUD_API_TOKEN}'
     data = requests.get(rf_api_url).json()
-    return data
+    return pd.DataFrame(data)
